@@ -23,6 +23,10 @@ public class ServerConfig extends CachingConfig
 {
     // General
     public final Cache.Boolean enableNetherPortals;
+    public final Cache.Boolean enableFireArrowSpreading;
+    public final Cache.Double fireStarterChance;
+    // Player
+    public final Cache.Boolean enableVanillaNaturalRegeneration;
     public final Cache.Boolean enableForcedTFCGameRules;
     // Climate
     public final Cache.Int temperatureScale;
@@ -43,8 +47,15 @@ public class ServerConfig extends CachingConfig
     // Blocks - Cobblestone
     public final Cache.Boolean enableMossyRockSpreading;
     public final Cache.Int mossyRockSpreadRate;
+    // Blocks - Torch
+    public final Cache.Int torchTicks;
+    // Blocks - Charcoal Pit
+    public final Cache.Int charcoalTicks;
+    // Blocks - Pit Kiln
+    public final Cache.Int pitKilnTicks;
     // Mechanics - Heat
     public final Cache.Double itemHeatingModifier;
+    public final Cache.Int rainTicks;
     // Mechanics - Collapses
     public final Cache.Boolean enableBlockCollapsing;
     public final Cache.Boolean enableExplosionCollapsing;
@@ -63,6 +74,13 @@ public class ServerConfig extends CachingConfig
         innerBuilder.push("general");
 
         enableNetherPortals = wrap(builder.apply("enableNetherPortals").comment("Enable nether portal creation").define("enableNetherPortals", false));
+        enableFireArrowSpreading = wrap(builder.apply("enableFireArrowSpreading").comment("Enable fire arrows and fireballs to spread fire and light blocks.").define("enableFireArrowSpreading", true));
+        fireStarterChance = wrap(builder.apply("fireStarterChance").comment("Base probability for a firestarter to start a fire. May change based on circumstances").defineInRange("fireStarterChance", 0.5, 0, 1));
+
+        innerBuilder.pop().push("player");
+
+        enableVanillaNaturalRegeneration = wrap(builder.apply("enableVanillaNaturalRegeneration").comment("Enables the vanilla `naturalRegeneration` gamerule, which regenerates your health much quicker than TFC does.").define("enableVanillaNaturalRegeneration", false));
+
         enableForcedTFCGameRules = wrap(builder.apply("enableForcedTFCGameRules").comment(
             "Forces a number of game rules to specific values.",
             "  naturalRegeneration = false (Health regen is much slower and not tied to extra saturation)",
@@ -106,9 +124,22 @@ public class ServerConfig extends CachingConfig
         enableMossyRockSpreading = wrap(builder.apply("enableMossyRockSpreading").comment("If mossy rock blocks will spread their moss to nearby rock blocks (bricks and cobble; stairs, slabs and walls thereof).").define("enableMossyRockSpreading", true));
         mossyRockSpreadRate = wrap(builder.apply("mossyRockSpreadRate").comment("The rate at which rock blocks will accumulate moss. Higher value = slower.").defineInRange("mossyRockSpreadRate", 20, 1, Integer.MAX_VALUE));
 
+        innerBuilder.pop().push("torch");
+
+        torchTicks = wrap(builder.apply("torchTicks").comment("Number of ticks required for a torch to burn out (72000 = 1 in game hour = 50 seconds), default is 72 hours. Set to -1 to disable torch burnout.").defineInRange("torchTicks", 7200, -1, Integer.MAX_VALUE));
+
+        innerBuilder.pop().push("charcoal");
+
+        charcoalTicks = wrap(builder.apply("charcoalTicks").comment("Number of ticks required for charcoal pit to complete. (1000 = 1 in game hour = 50 seconds), default is 18 hours.").defineInRange("charcoalTicks", 18000, -1, Integer.MAX_VALUE));
+
+        innerBuilder.pop().push("pit_kiln");
+
+        pitKilnTicks = wrap(builder.apply("pitKilnTicks").comment("Number of ticks required for a pit kiln to burn out. (1000 = 1 in game hour = 50 seconds), default is 8 hours.").defineInRange("pitKilnTicks", 8000, 20, Integer.MAX_VALUE));
+
         innerBuilder.pop().pop().push("mechanics").push("heat");
 
         itemHeatingModifier = wrap(builder.apply("itemHeatingModifier").comment("A multiplier for how fast items heat and cool. Higher = faster.").defineInRange("itemHeatingModifier", 1, 0, Double.MAX_VALUE));
+        rainTicks = wrap(builder.apply("rainTicks").comment("Number of burning ticks that is removed when the fire pit is on rain (random ticks). Makes fuel burn faster.").defineInRange("rainTicks", 1000, 0, Integer.MAX_VALUE));
 
         innerBuilder.pop().push("collapses");
 
