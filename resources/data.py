@@ -44,7 +44,7 @@ def generate(rm: ResourceManager):
 
         # Common metal crafting tools
         if 'tool' in metal_data.types:
-            for tool in ('hammer', 'chisel', 'axe', 'pickaxe', 'shovel'):
+            for tool in ('hammer', 'chisel', 'axe', 'pickaxe', 'shovel', 'saw'):
                 rm.item_tag('tfc:%ss' % tool, 'tfc:metal/%s/%s' % (tool, metal))
             rm.item_tag('forge:shears', 'tfc:metal/shears/%s' % metal)
     # Grill

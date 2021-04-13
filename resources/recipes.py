@@ -30,33 +30,6 @@ def generate(rm: ResourceManager):
         })
         return RecipeContext(rm, res)
 
-    def heat_recipe(name, item: str, result: str, count: int = 1, temperature: float = 1599, heat_capacity: float = 0) -> RecipeContext:
-        if heat_capacity > 0:
-            rm.data(('tfc', 'item_heats', name), {
-                'ingredient': utils.ingredient(item),
-                'heat_capacity': heat_capacity
-            })
-        return rm.recipe(('heating', name), 'tfc:heating', {
-            'ingredient': utils.ingredient(item),
-            'result': utils.item_stack((count, result)),
-            'temperature': temperature
-        })
-
-    def pot_recipe(name: utils.ResourceIdentifier, ingredients: List[str], outputs: List[str], fluid_in: str, fluid_out: str, duration: int, temperature: float) -> RecipeContext:
-        res = utils.resource_location(rm.domain, name)
-        rm.recipe(('simple_pot', name), 'tfc:simple_pot', {
-            'ingredients': [utils.ingredient(i) for i in ingredients],
-            'outputs': [utils.item_stack(i) for i in outputs],
-            'fluidInput': fluid_stack(fluid_in, 1000),
-            'fluidOutput': fluid_stack(fluid_out, 1000),
-            'duration': duration,
-            'temperature': temperature
-        })
-        return RecipeContext(rm, res)
-
-    def fluid_stack(fluid: str, amount: int):
-        return {'FluidName': fluid, 'Amount': amount}
-
     # Rock Things
     for rock in ROCKS.keys():
 
@@ -98,18 +71,50 @@ def generate(rm: ResourceManager):
 
         damage_shapeless('crafting/rock/%s_cracked' % rock, (bricks, 'tag!tfc:hammers'), cracked_bricks).with_advancement(bricks)
 
-    heat_recipe('stick', 'tag!forge:rods/wooden', 'tfc:torch', count=2, temperature=40, heat_capacity=0.1)
-    heat_recipe('stick_bunch', 'tfc:stick_bunch', 'minecraft:torch', count=18, temperature=60, heat_capacity=0.2)
-    heat_recipe('glass_shard', 'tfc:glass_shard', 'minecraft:glass', temperature=600, heat_capacity=1.0)
-    heat_recipe('sand', 'tag!forge:sand', 'minecraft:glass', temperature=600, heat_capacity=1.0)
-    heat_recipe('unfired_brick', 'tfc:ceramic/unfired_brick', 'minecraft:brick', heat_capacity=1.1)
-    heat_recipe('unfired_flower_pot', 'tfc:ceramic/unfired_flower_pot', 'minecraft:flower_pot', heat_capacity=1.0)
-    heat_recipe('unfired_jug', 'tfc:ceramic/unfired_jug', 'tfc:ceramic/jug', heat_capacity=1.0)
-    # todo: crucible
-    heat_recipe('clay_block', 'minecraft:clay', 'minecraft:terracotta', temperature=600, heat_capacity=1.0)
-    for color in COLORS:
-        heat_recipe('terracotta_%s' % color, 'minecraft:%s_terracotta' % color, 'minecraft:%s_glazed_terracotta' % color, temperature=1200, heat_capacity=1.0)
-    for pottery in PAIRED_POTTERY:
-        heat_recipe(pottery, 'tfc:ceramic/' + pottery, 'tfc:ceramic/unfired_' + pottery, heat_capacity=1.0)
+    # Wood things
+    for wood in WOODS:
 
-    pot_recipe('test', ['tfc:jute', 'tfc:jute', 'tfc:straw'], ['tfc:glue', 'tfc:glass_shard'], 'minecraft:water', 'tfc:salt_water', 200, 500)
+        logs = 'tfc:wood/log/%s' % wood
+        stripped_logs = 'tfc:wood/stripped_log/%s' % wood
+        lumber = 'tfc:wood/lumber/%s' % wood
+        stripped_woods = 'tfc:wood/stripped_wood/%s' % wood
+        woods = 'tfc:wood/wood/%s' % wood
+
+        planks = 'tfc:wood/planks/%s' % wood
+        slabs = 'tfc:wood/planks/%s_slab' % wood
+        stairs = 'tfc:wood/planks/%s_stairs' % wood
+        fences = 'tfc:wood/planks/%s_fence' % wood
+        logfences = 'tfc:wood/planks/%s_log_fence' % wood
+        gates = 'tfc:wood/planks/%s_fence_gate' % wood
+        trapdoors = 'tfc:wood/planks/%s_trapdoor' % wood
+        doors = 'tfc:wood/planks/%s_door' % wood
+        buttons = 'tfc:wood/planks/%s_button' % wood
+        pressureplates = 'tfc:wood/planks/%s_pressure_plate' % wood
+        toolracks = 'tfc:wood/planks/%s_tool_rack' % wood
+        bookshelves = 'tfc:wood/planks/%s_bookshelf' % wood
+
+        # Planks <-> Lumber
+        damage_shapeless('crafting/wood/%s_lumber_logs' % wood, (logs, 'tag!tfc:saws'), (8, lumber))
+        damage_shapeless('crafting/wood/%s_planks_to_lumber_planks' % wood, (planks, 'tag!tfc:saws'), (4, lumber))
+
+        # Wood
+        rm.crafting_shaped('crafting/wood/%s_wood' % wood, ['XX', 'XX'], logs, (3, woods))
+        rm.crafting_shaped('crafting/wood/%s_stripped_wood' % wood, ['XX', 'XX'], stripped_logs, (3, stripped_woods))
+
+        # Plank recipes
+        rm.crafting_shaped('crafting/wood/%s_planks' % wood, ['XX', 'XX'], lumber, planks)
+        rm.crafting_shaped('crafting/wood/%s_slabs' % wood, ['XXX'], planks, (6, slabs))
+        rm.crafting_shaped('crafting/wood/%s_stairs' % wood, ['X  ', 'XX ', 'XXX'], planks, (8, stairs))
+        rm.crafting_shaped('crafting/wood/%s_fence' % wood, ['XYX', 'XYX'], {'X': planks, 'Y': lumber}, (8, fences))
+        rm.crafting_shaped('crafting/wood/%s_log_fence' % wood, ['XYX', 'XYX'], {'X': logs, 'Y': lumber}, (8, logfences))
+        rm.crafting_shaped('crafting/wood/%s_fence_gate' % wood, ['XYX', 'XYX'], {'X': lumber, 'Y': planks}, (2, gates))
+        rm.crafting_shaped('crafting/wood/%s_trapdoor' % wood, ['XXX', 'XXX'], lumber, (3, trapdoors))
+        rm.crafting_shaped('crafting/wood/%s_door' % wood, ['XX', 'XX', 'XX'], lumber, (2, doors))
+        rm.crafting_shaped('crafting/wood/%s_button' % wood, ['X'], planks, buttons)
+        rm.crafting_shaped('crafting/wood/%s_pressure_plate' % wood, ['XX'], lumber, pressureplates)
+        rm.crafting_shaped('crafting/wood/%s_tool_rack' % wood, ['XXX', '   ', 'XXX'], lumber, toolracks)
+        rm.crafting_shaped('crafting/wood/%s_bookshelf' % wood, ['XXX', 'YYY', 'XXX'], {'X': planks, 'Y': 'minecraft:book'}, bookshelves)
+
+
+
+
