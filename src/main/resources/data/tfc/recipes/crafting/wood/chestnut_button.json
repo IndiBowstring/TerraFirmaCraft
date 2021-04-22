@@ -1,0 +1,15 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X"
+  ],
+  "key": {
+    "X": {
+      "item": "tfc:wood/planks/chestnut"
+    }
+  },
+  "result": {
+    "item": "tfc:wood/planks/chestnut_button"
+  }
+}

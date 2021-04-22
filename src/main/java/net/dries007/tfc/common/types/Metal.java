@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import net.minecraft.block.Block;
+import net.minecraft.block.ChainBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.fluid.Fluid;
@@ -224,7 +225,8 @@ public class Metal
     public enum BlockType
     {
         ANVIL(Type.UTILITY, metal -> new Block(Block.Properties.of(Material.METAL).sound(SoundType.METAL).strength(4, 10).harvestLevel(0).harvestTool(ToolType.PICKAXE))),
-        LAMP(Type.UTILITY, metal -> new Block(Block.Properties.of(Material.METAL).sound(SoundType.METAL).strength(4, 10).harvestLevel(0).harvestTool(ToolType.PICKAXE)));
+        LAMP(Type.UTILITY, metal -> new Block(Block.Properties.of(Material.METAL).sound(SoundType.METAL).strength(4, 10).harvestLevel(0).harvestTool(ToolType.PICKAXE))),
+        CHAIN(Type.UTILITY, metal -> new ChainBlock(Block.Properties.of(Material.METAL).sound(SoundType.METAL).strength(4, 10).harvestLevel(0).harvestTool(ToolType.PICKAXE)));
 
         public static final Metal.BlockType[] VALUES = values();
 

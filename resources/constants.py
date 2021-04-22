@@ -76,7 +76,8 @@ METALS: Dict[str, Metal] = {
 }
 METAL_BLOCKS: Dict[str, MetalItem] = {
     'anvil': MetalItem('utility', 1400, 'tfc:block/anvil', None),
-    'lamp': MetalItem('utility', 100, 'tfc:block/lamp', None)
+    'lamp': MetalItem('utility', 100, 'tfc:block/lamp', None),
+    'chain': MetalItem('utility', 100, 'minecraft:block/chain', None)
 }
 METAL_ITEMS: Dict[str, MetalItem] = {
     'ingot': MetalItem('all', 100, 'item/generated', 'forge:ingots'),
